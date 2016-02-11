@@ -1,0 +1,123 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\ogl-OpenGL-tutorial_0015_33\ogl-OpenGL-tutorial_0015_33\common\controls.cpp" />
+    <ClCompile Include="..\..\ogl-OpenGL-tutorial_0015_33\ogl-OpenGL-tutorial_0015_33\common\objloader.cpp" />
+    <ClCompile Include="..\..\ogl-OpenGL-tutorial_0015_33\ogl-OpenGL-tutorial_0015_33\common\quaternion_utils.cpp" />
+    <ClCompile Include="..\..\ogl-OpenGL-tutorial_0015_33\ogl-OpenGL-tutorial_0015_33\common\tangentspace.cpp" />
+    <ClCompile Include="..\..\ogl-OpenGL-tutorial_0015_33\ogl-OpenGL-tutorial_0015_33\common\texture.cpp" />
+    <ClCompile Include="..\..\ogl-OpenGL-tutorial_0015_33\ogl-OpenGL-tutorial_0015_33\common\vboindexer.cpp" />
+    <ClCompile Include="cleanerMain.cpp" />
+    <ClCompile Include="grid.cpp" />
+    <ClCompile Include="myShader.cpp" />
+    <ClCompile Include="shader.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\ogl-OpenGL-tutorial_0015_33\ogl-OpenGL-tutorial_0015_33\common\controls.hpp" />
+    <ClInclude Include="..\..\ogl-OpenGL-tutorial_0015_33\ogl-OpenGL-tutorial_0015_33\common\objloader.hpp" />
+    <ClInclude Include="..\..\ogl-OpenGL-tutorial_0015_33\ogl-OpenGL-tutorial_0015_33\common\quaternion_utils.hpp" />
+    <ClInclude Include="..\..\ogl-OpenGL-tutorial_0015_33\ogl-OpenGL-tutorial_0015_33\common\tangentspace.hpp" />
+    <ClInclude Include="..\..\ogl-OpenGL-tutorial_0015_33\ogl-OpenGL-tutorial_0015_33\common\texture.hpp" />
+    <ClInclude Include="..\..\ogl-OpenGL-tutorial_0015_33\ogl-OpenGL-tutorial_0015_33\common\vboindexer.hpp" />
+    <ClInclude Include="grid.h" />
+    <ClInclude Include="myShader.h" />
+    <ClInclude Include="shader.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="calcIntersection.frag" />
+    <None Include="calcIntersection.geo" />
+    <None Include="calcIntersection.vert" />
+    <None Include="calcIntersection2.frag" />
+    <None Include="calcIntersection2.vert" />
+    <None Include="compareSurfaceAndGrid.frag" />
+    <None Include="compareSurfaceAndGrid.vert" />
+    <None Include="fragGiveColor.glsl" />
+    <None Include="fragUsesTexture.glsl" />
+    <None Include="getPos.vert" />
+    <None Include="lightToWorld.frag" />
+    <None Include="lightToWorld.vert" />
+    <None Include="passThrough.geo" />
+    <None Include="passThrough2.geo" />
+    <None Include="rasterizeWithPointSize.frag" />
+    <None Include="rasterizeWithPointSize.vert" />
+    <None Include="renderToTexture1.frag" />
+    <None Include="returnSeenPos.frag" />
+    <None Include="returnSeenPos.vert" />
+    <None Include="vertUsesTexture.glsl" />
+    <None Include="vertOnlyMoves.glsl" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{93FDAF3C-BB7F-4D98-895C-B24D01EAE287}</ProjectGuid>
+    <RootNamespace>UnderwaterCausticsandGodrays</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>C:\LiU\TSBK03\glew-1.11.0\include;C:\LiU\TSBK03\glfw-3.1.2.bin.WIN32\glfw-3.1.2.bin.WIN32\include\GLFW;C:\LiU\TSBK03\glm-0.9.7.1\glm;C:\LiU\TSBK03\ogl-OpenGL-tutorial_0015_33\ogl-OpenGL-tutorial_0015_33;C:\LiU\TSBK03\ogl-OpenGL-tutorial_0015_33\ogl-OpenGL-tutorial_0015_33\tutorial14_render_to_texture;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>C:\LiU\TSBK03\glew-1.11.0\lib;C:\LiU\TSBK03\glfw-3.1.2.bin.WIN32\glfw-3.1.2.bin.WIN32\lib-vc2013;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opengl32.lib;glu32.lib;glew32.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>C:\LiU\TSBK03\glew-1.11.0\include;C:\LiU\TSBK03\glfw-3.1.2.bin.WIN32\glfw-3.1.2.bin.WIN32\include\GLFW;C:\LiU\TSBK03\glm-0.9.7.1\glm;C:\LiU\TSBK03\ogl-OpenGL-tutorial_0015_33\ogl-OpenGL-tutorial_0015_33;C:\LiU\TSBK03\ogl-OpenGL-tutorial_0015_33\ogl-OpenGL-tutorial_0015_33\tutorial14_render_to_texture;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>C:\LiU\TSBK03\glew-1.11.0\lib;C:\LiU\TSBK03\glfw-3.1.2.bin.WIN32\glfw-3.1.2.bin.WIN32\lib-vc2013;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opengl32.lib;glu32.lib;glew32.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

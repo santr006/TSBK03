@@ -1,0 +1,24 @@
+﻿Build started 2016-02-11 16:55:03.
+     1>Project "C:\LiU\TSBK03\Underwater Caustics and Godrays\Underwater Caustics and Godrays\Underwater Caustics and Godrays.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I"C:\LiU\TSBK03\glew-1.11.0\include" /I"C:\LiU\TSBK03\glfw-3.1.2.bin.WIN32\glfw-3.1.2.bin.WIN32\include\GLFW" /I"C:\LiU\TSBK03\glm-0.9.7.1\glm" /I"C:\LiU\TSBK03\ogl-OpenGL-tutorial_0015_33\ogl-OpenGL-tutorial_0015_33" /I"C:\LiU\TSBK03\ogl-OpenGL-tutorial_0015_33\ogl-OpenGL-tutorial_0015_33\tutorial14_render_to_texture" /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _CRT_SECURE_NO_WARNINGS /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt cleanerMain.cpp
+         cleanerMain.cpp
+     1>c:\liu\tsbk03\underwater caustics and godrays\underwater caustics and godrays\cleanermain.cpp(585): warning C4244: 'initializing' : conversion from 'int' to 'float', possible loss of data
+     1>c:\liu\tsbk03\underwater caustics and godrays\underwater caustics and godrays\cleanermain.cpp(586): warning C4244: 'initializing' : conversion from 'int' to 'float', possible loss of data
+       Link:
+         C:\Program Files\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\LiU\TSBK03\Underwater Caustics and Godrays\Debug\Underwater Caustics and Godrays.exe" /INCREMENTAL /NOLOGO /LIBPATH:"C:\LiU\TSBK03\glew-1.11.0\lib" /LIBPATH:"C:\LiU\TSBK03\glfw-3.1.2.bin.WIN32\glfw-3.1.2.bin.WIN32\lib-vc2013" opengl32.lib glu32.lib glew32.lib glfw3.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\LiU\TSBK03\Underwater Caustics and Godrays\Debug\Underwater Caustics and Godrays.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\LiU\TSBK03\Underwater Caustics and Godrays\Debug\Underwater Caustics and Godrays.lib" /MACHINE:X86 Debug\controls.obj
+         Debug\objloader.obj
+         Debug\quaternion_utils.obj
+         Debug\tangentspace.obj
+         Debug\texture.obj
+         Debug\vboindexer.obj
+         Debug\cleanerMain.obj
+         Debug\grid.obj
+         Debug\myShader.obj
+         Debug\shader.obj
+         Underwater Caustics and Godrays.vcxproj -> C:\LiU\TSBK03\Underwater Caustics and Godrays\Debug\Underwater Caustics and Godrays.exe
+     1>Done Building Project "C:\LiU\TSBK03\Underwater Caustics and Godrays\Underwater Caustics and Godrays\Underwater Caustics and Godrays.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:02.51
