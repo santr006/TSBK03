@@ -1,8 +1,8 @@
 # version 330
 
-layout(location = 0) out float fragmentDepth;
-//in float hej;
+layout(location = 0) out vec4 Position;
+in vec4 pos;
 
 void main(){
-	fragmentDepth = gl_FragCoord.z;//hej;vec3(1,0,0);
+	Position = pos;
 }

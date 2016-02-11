@@ -10,8 +10,8 @@ using namespace glm;
 #include "grid.h"
 
 GLFWwindow* window;
-const int width = 700;
-const int height = 700;
+const int width = 20;
+const int height = 20;
 
 void init(); 
 vec3 lightLookAtCalc(vec3 cameraPos, vec3 cameraLookAtVec, float nearPlane, float farPlane, vec3 lightPos);
@@ -233,10 +233,14 @@ int main(){
 	GLuint MatrixIDcreateTexture1 = glGetUniformLocation(renderToTexture1Shader.programID, "MVP");
 	GLuint MatrixInvIDcreateTexture1 = glGetUniformLocation(renderToTexture1Shader.programID, "MVPinv");
 
-	Shader useTextureShader;
+	Shader useTextureShader; 
 	useTextureShader.createShader("vertUsesTexture.glsl", "passThrough2.geo", "fragUsesTexture.glsl");
 	GLuint MatrixIDuseTexture = glGetUniformLocation(useTextureShader.programID, "MVP");
 	GLuint TextureIDuseTexture = glGetUniformLocation(useTextureShader.programID, "renderedTexture");
+	//extra
+	GLuint waterNormalsTexIDuseTexture = glGetUniformLocation(useTextureShader.programID, "normals");
+	GLuint lightIDuseTexture = glGetUniformLocation(useTextureShader.programID, "lightPos");
+	GLuint sandTexIDuseTexture = glGetUniformLocation(useTextureShader.programID, "sand");
 
 	/*Shader compareShader;
 	createTextureShader.createShader("compareSurfaceAndGrid.vert", "compareSurfaceAndGrid.frag");
@@ -325,7 +329,26 @@ int main(){
 		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, renderedSceneTexture0, 0);
 		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 			return false;
-		//Render the water, save the pos in tex0, norm in tex2
+		//Render the water, save the pos in 0 = tex3
+		//In light-space
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, framebuffer);
+		glViewport(0, 0, width, height);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glUseProgram(renderToTexture0Shader.programID);
+
+		glUniformMatrix4fv(MatrixIDcreateTexture0, 1, GL_FALSE, &mvpLight[0][0]);
+
+		glEnableVertexAttribArray(0);
+		glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer_sand);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+		glDrawArrays(GL_TRIANGLES, 0, 12);
+		glDisableVertexAttribArray(0);
+
+		//change buffer to show on screen
+		/*glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, waterPointTexture1, 0);
+		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+			return false;*/
+		//Render the water, save the pos in 0 = tex1, norm in tex2
 		//In light-space
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, framebuffer);
 		glViewport(0, 0, width, height);
@@ -345,19 +368,27 @@ int main(){
 		//In light-space
 
 		//change buffer to show on screen
-		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, waterPointTexture1, 0);
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, estimatedPointTexture3, 0);
 		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 			return false;
-		//render water texture on grid, 0 = tex1
-		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+		//render water texture on grid, tex0
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, framebuffer);
 		glViewport(0, 0, width, height);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glUseProgram(useTextureShader.programID);
 
-		glUniformMatrix4fv(MatrixIDuseTexture, 1, GL_FALSE, &mvp[0][0]);
+		glUniformMatrix4fv(MatrixIDuseTexture, 1, GL_FALSE, &mvpLight[0][0]);
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, renderedSceneTexture0);
+		glBindTexture(GL_TEXTURE_2D, waterPointTexture1);
 		glUniform1i(TextureIDuseTexture, 0);
+		//extra
+		glUniform3f(lightIDuseTexture, lightPosition.x, lightPosition.y, lightPosition.z);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, waterPointNormal_refractedRay_Texture2);//normal
+		glUniform1i(waterNormalsTexIDuseTexture, 1);
+		glActiveTexture(GL_TEXTURE2);
+		glBindTexture(GL_TEXTURE_2D, renderedSceneTexture0);//sand
+		glUniform1i(sandTexIDuseTexture, 2);
 
 		glEnableVertexAttribArray(0);
 		glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer_grid);
@@ -486,7 +517,7 @@ int main(){
 	while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(window) == 0);
 
 	//Get the data from the texture bound to the screen
-	/*const size_t size = width * height * 3;
+	const size_t size = width * height * 3;
 	float texData[size];
 	glReadPixels(0, 0, width, height, GL_RGB, GL_FLOAT, texData);
 
@@ -495,7 +526,7 @@ int main(){
 		printf("Value at %d: %f %f %f\n", i / 3, texData[i], texData[i + 1], texData[i + 2]);
 	}
 	int a = 0;
-	std::cin >> a;*/
+	std::cin >> a;
 	
 	// Cleanup VBO and shader
 	glDeleteBuffers(1, &vertexbuffer_sand);
