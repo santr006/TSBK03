@@ -10,8 +10,8 @@ using namespace glm;
 #include "grid.h"
 
 GLFWwindow* window;
-const int width = 20;
-const int height = 20;
+const int width = 700;
+const int height = 700;
 
 void init(); 
 vec3 lightLookAtCalc(vec3 cameraPos, vec3 cameraLookAtVec, float nearPlane, float farPlane, vec3 lightPos);
@@ -99,7 +99,7 @@ const mat4 biasMatrix(
 	);
 
 int main(){
-	vec3 cameraPosition(0, 10, -4);
+	vec3 cameraPosition(0, 5, -5);
 	vec3 cameraLookAtPosition(0, 0, 0);
 	float nearPlane = 1;
 	float farPlane = 10;
@@ -198,13 +198,13 @@ int main(){
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, waterPointTexture1, 0);
 
-	GLuint waterPointNormal_refractedRay_Texture2;
-	glGenTextures(1, &waterPointNormal_refractedRay_Texture2);
-	glBindTexture(GL_TEXTURE_2D, waterPointNormal_refractedRay_Texture2);
+	GLuint waterPointNormalTexture2;
+	glGenTextures(1, &waterPointNormalTexture2);
+	glBindTexture(GL_TEXTURE_2D, waterPointNormalTexture2);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, width, height, 0, GL_RGB, GL_FLOAT, 0);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, waterPointNormal_refractedRay_Texture2, 0);
+	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, waterPointNormalTexture2, 0);
 
 	GLuint estimatedPointTexture3;
 	glGenTextures(1, &estimatedPointTexture3);
@@ -214,8 +214,16 @@ int main(){
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, estimatedPointTexture3, 0);
 
-	GLenum DrawBuffers[4] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3 };
-	glDrawBuffers(4, DrawBuffers);
+	GLuint refractedRayTexture4;
+	glGenTextures(1, &refractedRayTexture4);
+	glBindTexture(GL_TEXTURE_2D, refractedRayTexture4);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, width, height, 0, GL_RGB, GL_FLOAT, 0);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT4, refractedRayTexture4, 0);
+
+	GLenum DrawBuffers[5] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3, GL_COLOR_ATTACHMENT4 };
+	glDrawBuffers(5, DrawBuffers);
 
 	// Always check that our framebuffer is ok
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
@@ -327,9 +335,13 @@ int main(){
 
 		//change buffer to show on screen
 		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, renderedSceneTexture0, 0);
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, 0, 0);
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, 0, 0);
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, 0, 0);
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT4, 0, 0);
 		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 			return false;
-		//Render the water, save the pos in 0 = tex3
+		//Render the sand, save the pos in tex0
 		//In light-space
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, framebuffer);
 		glViewport(0, 0, width, height);
@@ -345,10 +357,14 @@ int main(){
 		glDisableVertexAttribArray(0);
 
 		//change buffer to show on screen
-		/*glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, waterPointTexture1, 0);
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, 0, 0);
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, waterPointTexture1, 0);
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, waterPointNormalTexture2, 0);
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, 0, 0);
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT4, 0, 0);
 		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-			return false;*/
-		//Render the water, save the pos in 0 = tex1, norm in tex2
+			return false;
+		//Render the water, save the pos in tex1, norm in tex2
 		//In light-space
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, framebuffer);
 		glViewport(0, 0, width, height);
@@ -361,30 +377,38 @@ int main(){
 		glEnableVertexAttribArray(0);
 		glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer_water);
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+		glEnableVertexAttribArray(1);
+		glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer_water_normal);
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 		glDisableVertexAttribArray(0);
+		glDisableVertexAttribArray(1);
 
 		//Calculate intersection points of rays with scene geometry
 		//In light-space
 
 		//change buffer to show on screen
 		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, estimatedPointTexture3, 0);
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, 0, 0);
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, 0, 0);
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, 0, 0);
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT4, refractedRayTexture4, 0);
 		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 			return false;
-		//render water texture on grid, tex0
-		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, framebuffer);
+		//render water texture on grid, estimated point 0 = tex3, refracted ray tex2
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 		glViewport(0, 0, width, height);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glUseProgram(useTextureShader.programID);
 
-		glUniformMatrix4fv(MatrixIDuseTexture, 1, GL_FALSE, &mvpLight[0][0]);
+		glUniformMatrix4fv(MatrixIDuseTexture, 1, GL_FALSE, &mvp[0][0]);
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, waterPointTexture1);
+		glBindTexture(GL_TEXTURE_2D, waterPointTexture1); 
 		glUniform1i(TextureIDuseTexture, 0);
 		//extra
 		glUniform3f(lightIDuseTexture, lightPosition.x, lightPosition.y, lightPosition.z);
 		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, waterPointNormal_refractedRay_Texture2);//normal
+		glBindTexture(GL_TEXTURE_2D, waterPointNormalTexture2);//normal
 		glUniform1i(waterNormalsTexIDuseTexture, 1);
 		glActiveTexture(GL_TEXTURE2);
 		glBindTexture(GL_TEXTURE_2D, renderedSceneTexture0);//sand
@@ -517,14 +541,14 @@ int main(){
 	while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(window) == 0);
 
 	//Get the data from the texture bound to the screen
-	const size_t size = width * height * 3;
+	/*const size_t size = width * height * 3;
 	float texData[size];
 	glReadPixels(0, 0, width, height, GL_RGB, GL_FLOAT, texData);
 
 	for (int i = 0; i < size; i += 3)
 	{
 		printf("Value at %d: %f %f %f\n", i / 3, texData[i], texData[i + 1], texData[i + 2]);
-	}
+	}*/
 	int a = 0;
 	std::cin >> a;
 	
@@ -541,9 +565,11 @@ int main(){
 	glDeleteProgram(emitPointShader.programID);
 	glDeleteVertexArrays(1, &VertexArrayID);
 	glDeleteTextures(1, &renderedSceneTexture0); 
-	glDeleteTextures(1, &waterPointTexture1);
-	glDeleteTextures(1, &waterPointNormal_refractedRay_Texture2);
+	glDeleteTextures(1, &waterPointTexture1); 
+	glDeleteTextures(1, &waterPointNormalTexture2);
 	glDeleteTextures(1, &estimatedPointTexture3);
+	glDeleteTextures(1, &refractedRayTexture4);
+
 
 	// Close OpenGL window and terminate GLFW
 	glfwTerminate();

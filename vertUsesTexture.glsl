@@ -7,6 +7,7 @@ out vec2 vUV;
 out vec4 vtex;
 //extra
 out vec4 estimatedPoint;
+out vec3 refRay;
 
 uniform mat4 MVP;
 uniform sampler2D renderedTexture;
@@ -16,9 +17,9 @@ uniform vec3 lightPos;
 
 
 void main() {
-	gl_Position = MVP * vec4(vertexPosition_modelspace,1);
+	gl_Position = MVP * vec4(vertexPosition_modelspace,1);//grid points in light-space
 	vUV = vertexUV;
-	vtex = MVP * texture( renderedTexture, vUV );
+	vtex = MVP * texture( renderedTexture, vUV );//water points in light-space
 
 	//extra
 	vec3 point = texture( renderedTexture, vUV ).xyz;
@@ -35,4 +36,5 @@ void main() {
 	vec3 p = point + r2;
 
 	estimatedPoint = MVP * vec4(p,1);
+	refRay = r2;
 }
