@@ -15,7 +15,8 @@ const int height = 700;
 
 void init(); 
 vec3 lightLookAtCalc(vec3 cameraPos, vec3 cameraLookAtVec, float nearPlane, float farPlane, vec3 lightPos);
-void makeGrid(GLfloat* grid, GLfloat* texCoord, int w, int h, glm::vec3 pos, float dist, float cw, float step, int pixelW, int pixelH);
+void makeGrid(GLfloat* grid, GLfloat* texCoord, int w, int h, glm::vec3 pos, float dist, float cw, int pixelW, int pixelH);
+void printNormals(int i);
 
 // An array of 12 vectors which represents the two triangles building the floor plane
 // and the two triangles building the smaller plane above the floor that will create a shadow
@@ -65,21 +66,94 @@ static const GLfloat g_vertex_buffer_data_sand_UV[] = {
 };
 
 static const GLfloat g_vertex_buffer_data_water[] = {
+	/*-2.0f, 1.0f, 2.0f,
+	2.0f, 1.0f, 2.0f,
+	2.0f, 1.0f, 0.0f,
+	2.0f, 1.0f, 0.0f,
+	-2.0f, 1.0f, 0.0f,
+	-2.0f, 1.0f, 2.0f,*/
+	-2.0f, 1.0f, -2.0f,
+	2.0f, 2.0f, 2.0f,
+	2.0f, 1.0f, -2.0f,
+	-2.0f, 1.0f, -2.0f,
 	-2.0f, 2.0f, 2.0f,
 	2.0f, 2.0f, 2.0f,
-	2.0f, 2.0f, -2.0f,
-	2.0f, 2.0f, -2.0f,
-	-2.0f, 2.0f, -2.0f,
-	-2.0f, 2.0f, 2.0f,
+	/*-2.0f, 1.0f, 0.0f,
+	-2.0f, 1.0f, -2.0f,
+	2.0f, 1.0f, -2.0f,
+	-2.0f, 2.0f, 0.0f,
+	2.0f, 1.0f, -2.0f,
+	2.0f, 2.0f, 0.0f,
+	-2.0f, 2 * glm::sin(0), 2 * glm::cos(0),
+	2.0f, 2 * glm::sin(3.14 / 4.0), 2 * glm::cos(3.14 / 4.0),
+	2.0f, 2 * glm::sin(0), 2 * glm::cos(0),
+	-2.0f, 2 * glm::sin(0), 2 * glm::cos(0),
+	-2.0f, 2 * glm::sin(3.14 / 4.0), 2 * glm::cos(3.14 / 4.0),
+	2.0f, 2 * glm::sin(3.14 / 4.0), 2 * glm::cos(3.14 / 4.0),
+
+	-2.0f, 2 * glm::sin(3.14 / 4.0), 2 * glm::cos(3.14 / 4.0),
+	2.0f, 2 * glm::sin(3.14 / 2.0), 2 * glm::cos(3.14 / 2.0),
+	2.0f, 2 * glm::sin(3.14 / 4.0), 2 * glm::cos(3.14 / 4.0),
+	-2.0f, 2 * glm::sin(3.14 / 4.0), 2 * glm::cos(3.14 / 4.0),
+	-2.0f, 2 * glm::sin(3.14 / 2.0), 2 * glm::cos(3.14 / 2.0),
+	2.0f, 2 * glm::sin(3.14 / 2.0), 2 * glm::cos(3.14 / 2.0),
+
+	-2.0f, 2 * glm::sin(3.14 / 2.0), 2 * glm::cos(3.14 / 2.0),
+	2.0f, 2 * glm::sin(3 * 3.14 / 4.0), 2 * glm::cos(3 * 3.14 / 4.0),
+	2.0f, 2 * glm::sin(3.14 / 2.0), 2 * glm::cos(3.14 / 2.0),
+	-2.0f, 2 * glm::sin(3.14 / 2.0), 2 * glm::cos(3.14 / 2.0),
+	-2.0f, 2 * glm::sin(3 * 3.14 / 4.0), 2 * glm::cos(3 * 3.14 / 4.0),
+	2.0f, 2 * glm::sin(3 * 3.14 / 4.0), 2 * glm::cos(3 * 3.14 / 4.0),
+
+	-2.0f, 2 * glm::sin(3 * 3.14 / 4.0), 2 * glm::cos(3 * 3.14 / 4.0),
+	2.0f, 2 * glm::sin(3.14), 2 * glm::cos(3.14),
+	2.0f, 2 * glm::sin(3 * 3.14 / 4.0), 2 * glm::cos(3 * 3.14 / 4.0),
+	-2.0f, 2 * glm::sin(3 * 3.14 / 4.0), 2 * glm::cos(3 * 3.14 / 4.0),
+	-2.0f, 2 * glm::sin(3.14), 2 * glm::cos(3.14),
+	2.0f, 2 * glm::sin(3.14), 2 * glm::cos(3.14),
+
+	//-2.0f, 2 * glm::sin(3.14), 2 * glm::cos(3.14),*/
 };
 
+//cross them to get the vertex normals
+
 static const GLfloat g_vertex_buffer_data_water_normals[] = {
+	/*0.0f, 1.0f, 0.0f,
 	0.0f, 1.0f, 0.0f,
 	0.0f, 1.0f, 0.0f,
 	0.0f, 1.0f, 0.0f,
 	0.0f, 1.0f, 0.0f,
-	0.0f, 1.0f, 0.0f,
-	0.0f, 1.0f, 0.0f,
+	0.0f, 1.0f, 0.0f,*/
+	0.0f, 2.0f, -1.0f,
+	0.0f, 2.0f, -1.0f,
+	0.0f, 2.0f, -1.0f,
+	0.0f, 2.0f, -1.0f,
+	0.0f, 2.0f, -1.0f,
+	0.0f, 2.0f, -1.0f,
+	/*0.0f, 2.34f, -5.65f,
+	0.0f, 2.34f, -5.65f,
+	0.0f, 2.34f, -5.65f,
+	0.0f, 2.34f, -5.65f,
+	0.0f, 2.34f, -5.65f,
+	0.0f, 2.34f, -5.65f,
+	0.0f, 5.65, -2.34f,
+	0.0f, 5.65, -2.34f,
+	0.0f, 5.65, -2.34f,
+	0.0f, 5.65, -2.34f,
+	0.0f, 5.65, -2.34f,
+	0.0f, 5.65, -2.34f,
+	0.0f, 5.65, 2.34f,
+	0.0f, 5.65, 2.34f,
+	0.0f, 5.65, 2.34f,
+	0.0f, 5.65, 2.34f,
+	0.0f, 5.65, 2.34f,
+	0.0f, 5.65, 2.34f,
+	0.0f, 2.34f, 5.65,
+	0.0f, 2.34f, 5.65,
+	0.0f, 2.34f, 5.65,
+	0.0f, 2.34f, 5.65,
+	0.0f, 2.34f, 5.65,
+	0.0f, 2.34f, 5.65,*/
 };
 
 static const GLfloat g_vertex_buffer_data_water_UV[] = {
@@ -91,6 +165,24 @@ static const GLfloat g_vertex_buffer_data_water_UV[] = {
 	0.0f, 1.0f,
 };
 
+static const GLfloat g_vertex_buffer_quad[] = {
+	1.0f, 1.0f, 0.0f,
+	-1.0f, -1.0f, 0.0f,
+	1.0f, -1.0f, 0.0f,
+	1.0f, 1.0f, 0.0f,
+	-1.0f, 1.0f, 0.0f,
+	-1.0f, -1.0f, 0.0f,
+};
+
+static const GLfloat g_vertex_buffer_quad_UV[] = {
+	1.0f, 1.0f,
+	0.0f, 0.0f,
+	1.0f, 0.0f,
+	1.0f, 1.0f,
+	0.0f, 1.0f,
+	0.0f, 0.0f,
+};
+
 const mat4 biasMatrix(
 	0.5, 0.0, 0.0, 0.0,
 	0.0, 0.5, 0.0, 0.0,
@@ -99,22 +191,54 @@ const mat4 biasMatrix(
 	);
 
 int main(){
+	int o = 0;
+	printNormals(o);
+	o += 9;
+	printNormals(o);
+	o += 9;
+	printNormals(o);
+	o += 9;
+	printNormals(o);
+	o += 9;
+	printNormals(o);
+	o += 9;
+	printNormals(o);
+	o += 9;
+	printNormals(o);
+	o += 9;
+	printNormals(o);
+	o += 9;
+
 	vec3 cameraPosition(0, 5, -5);
 	vec3 cameraLookAtPosition(0, 0, 0);
 	float nearPlane = 1;
 	float farPlane = 10;
 	vec3 lightPosition(0, 6, 0);
+	float maxSize = 20;
+	float minSize = 10;
 
 	init();
 
-	const int gridWidth = 6;
-	const int gridHeight = 6;
-	float step = 2;
+	const int gridWidth = 40;
+	const int gridHeight = 40;
 	GLfloat theGrid[gridWidth * gridHeight * 3] = { 0 };
 	GLfloat gridTexCoord[gridWidth * gridHeight * 2] = { 0 };
 	GLfloat* gridPtr = theGrid;
 	GLfloat* gridTexCoordPtr = gridTexCoord;
-	makeGrid(gridPtr, gridTexCoordPtr, gridWidth, gridHeight, vec3(0, 0, 0), 0.0, 0.5, step, width, height);
+	makeGrid(gridPtr, gridTexCoordPtr, gridWidth, gridHeight, vec3(0, 0, 0), 0.0, 0.13, width, height);
+	
+	glm::vec3 upperLeft = glm::vec3(theGrid[0], theGrid[1], theGrid[2]);
+	glm::vec2 upperLeftUV = glm::vec2(gridTexCoord[0], gridTexCoord[1]);
+
+	int i = (gridWidth - 1) * 3;
+	glm::vec3 upperRight = glm::vec3(theGrid[i], theGrid[i + 1], theGrid[i + 2]);
+	i = (gridWidth - 1) * 2;
+	glm::vec2 upperRightUV = glm::vec2(gridTexCoord[i], gridTexCoord[i + 1]);
+	
+	i = gridWidth * (gridHeight - 1) * 3;
+	glm::vec3 lowerLeft = glm::vec3(theGrid[i], theGrid[i + 1], theGrid[i + 2]);
+	i = gridWidth * (gridHeight - 1) * 2;
+	glm::vec2 lowerLeftUV = glm::vec2(gridTexCoord[i], gridTexCoord[i + 1]);
 
 	//FPS
 	double lastTime = glfwGetTime();
@@ -163,6 +287,16 @@ int main(){
 	glGenBuffers(1, &vertexbuffer_water_UV);
 	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer_water_UV);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data_water_UV), g_vertex_buffer_data_water_UV, GL_STATIC_DRAW);
+
+	//quad
+	GLuint vertexbuffer_quad;
+	glGenBuffers(1, &vertexbuffer_quad);
+	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer_quad);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_quad), g_vertex_buffer_quad, GL_STATIC_DRAW);
+	GLuint vertexbuffer_quad_UV;
+	glGenBuffers(1, &vertexbuffer_quad_UV);
+	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer_quad_UV);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_quad_UV), g_vertex_buffer_quad_UV, GL_STATIC_DRAW);
 
 	// Projection matrix : 45° Field of View, 4:3 ratio, display range : 0.1 unit <-> 100 units
 	glm::mat4 Projection = glm::perspective(glm::radians(45.0f), (float)width / (float)height, nearPlane, farPlane);
@@ -222,8 +356,16 @@ int main(){
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT4, refractedRayTexture4, 0);
 
-	GLenum DrawBuffers[5] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3, GL_COLOR_ATTACHMENT4 };
-	glDrawBuffers(5, DrawBuffers);
+	GLuint causticsTexture5;
+	glGenTextures(1, &causticsTexture5);
+	glBindTexture(GL_TEXTURE_2D, causticsTexture5);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, width, height, 0, GL_RGBA, GL_FLOAT, 0);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT5, causticsTexture5, 0);
+
+	GLenum DrawBuffers[6] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3, GL_COLOR_ATTACHMENT4, GL_COLOR_ATTACHMENT5 };
+	glDrawBuffers(6, DrawBuffers);
 
 	// Always check that our framebuffer is ok
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
@@ -233,8 +375,12 @@ int main(){
 
 	//Create and compile the shader that will create the texture
 	Shader renderToTexture0Shader;
-	renderToTexture0Shader.createShader("vertOnlyMoves.glsl", "fragGiveColor.glsl");
+	renderToTexture0Shader.createShader("savePos.vert", "savePos.frag");
 	GLuint MatrixIDcreateTexture0 = glGetUniformLocation(renderToTexture0Shader.programID, "MVP");
+
+	Shader renderColorShader;
+	renderColorShader.createShader("vertOnlyMoves.glsl", "fragGiveColor.glsl");
+	GLuint MatrixIDColorTexture = glGetUniformLocation(renderToTexture0Shader.programID, "MVP");
 
 	Shader renderToTexture1Shader;
 	renderToTexture1Shader.createShader("getPos.vert", "renderToTexture1.frag"); 
@@ -245,11 +391,22 @@ int main(){
 	useTextureShader.createShader("vertUsesTexture.glsl", "passThrough2.geo", "fragUsesTexture.glsl");
 	GLuint MatrixIDuseTexture = glGetUniformLocation(useTextureShader.programID, "MVP");
 	GLuint TextureIDuseTexture = glGetUniformLocation(useTextureShader.programID, "renderedTexture");
-	//extra
 	GLuint waterNormalsTexIDuseTexture = glGetUniformLocation(useTextureShader.programID, "normals");
+	GLuint sandTexVIDuseTexture = glGetUniformLocation(useTextureShader.programID, "sandPos");
 	GLuint lightIDuseTexture = glGetUniformLocation(useTextureShader.programID, "lightPos");
-	GLuint sandTexIDuseTexture = glGetUniformLocation(useTextureShader.programID, "sand");
-
+	GLuint cameraIDuseTexture = glGetUniformLocation(useTextureShader.programID, "cameraPos");
+	GLuint upperLeftIDuseTexture = glGetUniformLocation(useTextureShader.programID, "upperLeft");
+	GLuint upperRightIDuseTexture = glGetUniformLocation(useTextureShader.programID, "upperRight");
+	GLuint lowerLeftIDuseTexture = glGetUniformLocation(useTextureShader.programID, "lowerLeft");
+	GLuint upperLeftUVIDuseTexture = glGetUniformLocation(useTextureShader.programID, "upperLeftUV");
+	GLuint upperRightUVIDuseTexture = glGetUniformLocation(useTextureShader.programID, "upperRightUV");
+	GLuint lowerLeftUVIDuseTexture = glGetUniformLocation(useTextureShader.programID, "lowerLeftUV");
+	GLuint maxSizeIDuseTexture = glGetUniformLocation(useTextureShader.programID, "maxSize");
+	GLuint minSizeIDuseTexture = glGetUniformLocation(useTextureShader.programID, "minSize");
+	GLuint zfarIDuseTexture = glGetUniformLocation(useTextureShader.programID, "zfar");
+	GLuint znearIDuseTexture = glGetUniformLocation(useTextureShader.programID, "znear");
+	GLuint sandTexFIDuseTexture = glGetUniformLocation(useTextureShader.programID, "sand");
+		
 	/*Shader compareShader;
 	createTextureShader.createShader("compareSurfaceAndGrid.vert", "compareSurfaceAndGrid.frag");
 	GLuint MatrixIDcompare = glGetUniformLocation(createTextureShader.programID, "MVP");
@@ -282,8 +439,10 @@ int main(){
 	GLuint MatrixIDemit = glGetUniformLocation(emitPointShader.programID, "MVP");
 	GLuint texIDemit = glGetUniformLocation(emitPointShader.programID, "estimatedPoint");
 
-	//Shader calcPointSizeShader;
-	//calcPointSizeShader.createShader("calcPointSize.vert", "calcPointSize.frag");
+	Shader combineShader;
+	combineShader.createShader("combine.vert", "combine.frag");
+	GLuint buffer1IDcombine = glGetUniformLocation(combineShader.programID, "buffer1");
+	GLuint buffer2IDcombine = glGetUniformLocation(combineShader.programID, "buffer2");
 
 	//main loop
 	do {
@@ -301,37 +460,7 @@ int main(){
 		vec3 lightLookAtPosition = cameraLookAtPosition;//lightLookAtCalc(cameraPosition, cameraLookAtPosition, nearPlane, farPlane, lightPosition);
 		//printf("%f %f %f\n", lightLookAtPosition.x, lightLookAtPosition.y, lightLookAtPosition.z);
 
-		//Render the geometry in the scene
-		//In camera-space
-		/*glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-		glViewport(0, 0, width, height);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glUseProgram(createTextureShader.programID);
-
-		glUniformMatrix4fv(MatrixIDcreateTexture, 1, GL_FALSE, &mvpLight[0][0]);
-
-		glEnableVertexAttribArray(0);
-		glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer_grid);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-		glDrawArrays(GL_POINTS, 0, 12);
-		glDisableVertexAttribArray(0);*/
-
-		//printf(renderedSceneTexture0)
-
-		//Render the shadow map for the sand, save z-buf in tex0
-		//In light-space
-		/*glBindFramebuffer(GL_DRAW_FRAMEBUFFER, framebuffer);
-		glViewport(0, 0, width, height);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glUseProgram(renderToTexture0Shader.programID);
-
-		glUniformMatrix4fv(MatrixIDcreateTexture0, 1, GL_FALSE, &mvpLight[0][0]);
-
-		glEnableVertexAttribArray(0);
-		glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer_sand);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-		glDrawArrays(GL_TRIANGLES, 0, 12);
-		glDisableVertexAttribArray(0);*/
+		
 
 		//change buffer to show on screen
 		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, renderedSceneTexture0, 0);
@@ -339,6 +468,7 @@ int main(){
 		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, 0, 0);
 		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, 0, 0);
 		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT4, 0, 0);
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT5, 0, 0);
 		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 			return false;
 		//Render the sand, save the pos in tex0
@@ -362,6 +492,7 @@ int main(){
 		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, waterPointNormalTexture2, 0);
 		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, 0, 0);
 		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT4, 0, 0);
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT5, 0, 0);
 		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 			return false;
 		//Render the water, save the pos in tex1, norm in tex2
@@ -388,32 +519,46 @@ int main(){
 		//In light-space
 
 		//change buffer to show on screen
-		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, estimatedPointTexture3, 0);
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, causticsTexture5, 0);
 		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, 0, 0);
 		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, 0, 0);
 		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, 0, 0);
 		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT4, refractedRayTexture4, 0);
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT5, 0, 0);
 		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 			return false;
 		//render water texture on grid, estimated point 0 = tex3, refracted ray tex2
-		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, framebuffer);
 		glViewport(0, 0, width, height);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glUseProgram(useTextureShader.programID);
 
 		glUniformMatrix4fv(MatrixIDuseTexture, 1, GL_FALSE, &mvp[0][0]);
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, waterPointTexture1); 
-		glUniform1i(TextureIDuseTexture, 0);
-		//extra
 		glUniform3f(lightIDuseTexture, lightPosition.x, lightPosition.y, lightPosition.z);
+		glUniform3f(cameraIDuseTexture, cameraPosition.x, cameraPosition.y, cameraPosition.z);
+		glUniform3f(upperLeftIDuseTexture, upperLeft.x, upperLeft.y, upperLeft.z);
+		glUniform3f(upperRightIDuseTexture, upperRight.x, upperRight.y, upperRight.z);
+		glUniform3f(lowerLeftIDuseTexture, lowerLeft.x, lowerLeft.y, lowerLeft.z);
+		glUniform2f(upperLeftUVIDuseTexture, upperLeftUV.x, upperLeftUV.y);
+		glUniform2f(upperRightUVIDuseTexture, upperRightUV.x, upperRightUV.y);
+		glUniform2f(lowerLeftUVIDuseTexture, lowerLeftUV.x, lowerLeftUV.y);
+		glUniform1f(maxSizeIDuseTexture, maxSize);
+		glUniform1f(minSizeIDuseTexture, minSize);
+		glUniform1f(zfarIDuseTexture, farPlane);
+		glUniform1f(znearIDuseTexture, nearPlane);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, waterPointTexture1);//water
+		glUniform1i(TextureIDuseTexture, 0);
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, waterPointNormalTexture2);//normal
 		glUniform1i(waterNormalsTexIDuseTexture, 1);
 		glActiveTexture(GL_TEXTURE2);
 		glBindTexture(GL_TEXTURE_2D, renderedSceneTexture0);//sand
-		glUniform1i(sandTexIDuseTexture, 2);
-
+		glUniform1i(sandTexVIDuseTexture, 2);
+		glActiveTexture(GL_TEXTURE3);
+		glBindTexture(GL_TEXTURE_2D, renderedSceneTexture0);//sand
+		glUniform1i(sandTexFIDuseTexture, 3);
+		
 		glEnableVertexAttribArray(0);
 		glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer_grid);
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
@@ -423,115 +568,64 @@ int main(){
 		glDrawArrays(GL_POINTS, 0, gridWidth * gridHeight);
 		glDisableVertexAttribArray(0);
 		glDisableVertexAttribArray(1);
-		//---------
-
-		//intersection with geometry, save points in tex3 and dir in tex2
-		/*glBindFramebuffer(GL_DRAW_FRAMEBUFFER, framebuffer);
-		glViewport(0, 0, width, height);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glUseProgram(intersectionShader.programID);
-
-		glUniformMatrix4fv(mvpIntersectID, 1, GL_FALSE, &mvpLight[0][0]);
-		glUniformMatrix4fv(mvpInvIntersectID, 1, GL_FALSE, &mvpInvLight[0][0]);
-		glUniform3f(lightID, lightPosition.x, lightPosition.y, lightPosition.z);
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, waterPointTexture1);
-		glUniform1i(waterPosID, 0);
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, waterPointNormal_refractedRay_Texture2);
-		glUniform1i(waterNormID, 1);
-
-		glEnableVertexAttribArray(0);
-		glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer_grid);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-		glEnableVertexAttribArray(1);
-		glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer_grid_UV);
-		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-		glDrawArrays(GL_POINTS, 0, gridWidth * gridHeight);
-		glDisableVertexAttribArray(0);
-		glDisableVertexAttribArray(1);
-		glDisableVertexAttribArray(2);*/
-
 
 		//change buffer to show on screen
-		/*glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, renderedSceneTexture0, 0);
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, estimatedPointTexture3, 0);
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, 0, 0);
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, 0, 0);
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, 0, 0);
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT4, 0, 0);
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT5, 0, 0);
 		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-			return false;*/
-		//emit
-		/*glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-		glViewport(0, 0, width, height);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glUseProgram(emitPointShader.programID);
-
-		glUniformMatrix4fv(MatrixIDemit, 1, GL_FALSE, &mvpLight[0][0]);
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, renderedSceneTexture0);
-		glUniform1i(texIDemit, 0);
-
-		glEnableVertexAttribArray(0);
-		glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer_grid);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-		glEnableVertexAttribArray(1);
-		glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer_grid_UV);
-		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-		glDrawArrays(GL_POINTS, 0, gridWidth * gridHeight);
-		glDisableVertexAttribArray(0);
-		glDisableVertexAttribArray(1);
-
-		/*for (int i = 0; i < 1; i++)
-		{
-		//save point in tex3
+			return false;
+		//combine buffers
+		//caustics + sand
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, framebuffer);
 		glViewport(0, 0, width, height);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glUseProgram(intersectionShader2.programID);
+		glUseProgram(renderColorShader.programID);
 
-		glUniformMatrix4fv(mvpIntersect2ID, 1, GL_FALSE, &mvpLight[0][0]);
-		glUniformMatrix4fv(mvpInvIntersect2ID, 1, GL_FALSE, &mvpInvLight[0][0]);
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, estimatedPointTexture3);
-		glUniform1i(estPointIntersect2ID, 0);
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, waterPointTexture1);
-		glUniform1i(waterPointIntersect2ID, 1);
-		glActiveTexture(GL_TEXTURE2);
-		glBindTexture(GL_TEXTURE_2D, waterPointNormal_refractedRay_Texture2);
-		glUniform1i(refracRayIntersect2ID, 2);
+		glUniformMatrix4fv(MatrixIDColorTexture, 1, GL_FALSE, &mvp[0][0]);
 
 		glEnableVertexAttribArray(0);
-		glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer_grid);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-		glEnableVertexAttribArray(1);
-		glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer_grid_UV);
-		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-		glDrawArrays(GL_POINTS, 0, gridWidth * gridHeight);
-		glDisableVertexAttribArray(0);
-		glDisableVertexAttribArray(1);
-
-		/*glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-		glViewport(0, 0, width, height);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glUseProgram(renderToTexture1Shader.programID);
-
-		glUniformMatrix4fv(MatrixIDcreateTexture0, 1, GL_FALSE, &mvpLight[0][0]);
-
-		glEnableVertexAttribArray(0);
-		glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer_grid);
+		glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer_sand);
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 		glDrawArrays(GL_TRIANGLES, 0, 12);
 		glDisableVertexAttribArray(0);
-		}*/
 
-		//Calculate size of intersection point to be displayed on screen 
-		//and filter them
-		//In camera-space, on GPU?
-		//rasterize shader
+		//change buffer to show on screen
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, refractedRayTexture4, 0);
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, 0, 0);
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, 0, 0);
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, 0, 0);
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT4, 0, 0);
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT5, 0, 0);
+		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+			return false;
+		//combine buffers
+		//caustics + sand
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+		glViewport(0, 0, width, height); 
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glUseProgram(combineShader.programID);
 
-		//Put together the needed framebuffers with additive blending
-		//In camera-space
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, causticsTexture5);
+		glUniform1i(buffer1IDcombine, 0);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, estimatedPointTexture3);
+		glUniform1i(buffer2IDcombine, 1);
 
-		//Render the water surface
-
+		glEnableVertexAttribArray(0);
+		glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer_quad);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+		glEnableVertexAttribArray(1);
+		glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer_quad_UV);
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+		glDisableVertexAttribArray(0);
+		glDisableVertexAttribArray(1);
+		//---------
 
 		// Swap buffers
 		glfwSwapBuffers(window);
@@ -619,6 +713,9 @@ void init(){
 	glEnable(GL_DEPTH_TEST);
 	// Accept fragment if it closer to the camera than the former one
 	glDepthFunc(GL_LESS);
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
 vec3 lightLookAtCalc(vec3 cameraPos, vec3 cameraLookAtPos, float nearPlane, float farPlane, vec3 lightPos){
@@ -628,36 +725,64 @@ vec3 lightLookAtCalc(vec3 cameraPos, vec3 cameraLookAtPos, float nearPlane, floa
 	return center;
 }
 
-//create grid points in the 3D-space
-//create texture coordinates for the grid points
-void makeGrid(GLfloat* grid, GLfloat* texCoord, int w, int h, glm::vec3 pos, float dist, float cw, float step, int pixelW, int pixelH)
+/*create grid points in the 3D-space
+  create texture coordinates for the grid points
+	GLfloat* grid - a pointer to where the grid should be saved 
+	GLfloat* texCoord - a pointer to where the texture coordinates for the grid should be saved
+	int gridW - number of grid points in one row in the grid
+	int gridH - number of grid points in one column in the grid
+	glm::vec3 pos - the position in world coordinates of the camera and the grid should be centered around it
+	float dist - tha distance from the camera to place the grid 
+	float cw - cell width, distance between grid points in world space
+	int pixelW - number of pixels in the width of the image
+	int pixelH - number of pixels in the height of the image
+*/
+void makeGrid(GLfloat* grid, GLfloat* texCoord, int gridW, int gridH, glm::vec3 pos, float dist, float cw, int pixelW, int pixelH)
 {
 	//give every cell a position
-	glm::vec3 leftUpperCorner3D(pos.x - (float)w / 2.0f * cw + cw / 2.0f, pos.y - dist, pos.z + (float)h / 2.0f * cw - cw / 2.0f);
+	glm::vec3 leftUpperCorner3D(pos.x - (float)gridW / 2.0f * cw + cw / 2.0f, pos.y - dist, pos.z + (float)gridH / 2.0f * cw - cw / 2.0f);
 	//printf("leftUpperCorner = %f %f %f", leftUpperCorner.x, leftUpperCorner.y, leftUpperCorner.z);
 
 	//assume pixelW and pixelH are even numbers, if not the error is negligible
-	int centerW = pixelW/2;//350
+	int centerW = pixelW / 2;//350
 	int centerH = pixelH / 2;
-	float stepW = pixelW / w;
-	float stepH = pixelH / h;
-	glm::vec2 leftUpperCornerPix(centerW - w / 2 * stepW + stepW / 2, centerH + h / 2 * stepH - stepH / 2);//350 - 50*70 + 35 = 35
+	float stepW = pixelW / gridW;// 700 / 20 = 35
+	float stepH = pixelH / gridH;
+	glm::vec2 leftUpperCornerPix(stepW / 2, pixelH - stepH / 2);//(centerW - gridW / 2 * stepW + stepW / 2, centerH + gridH / 2 * stepH - stepH / 2);//350 - 10*35 + 35/2
 
 	int j = 0;
-	for (int i = 0, k = 0; i < w*h * 3; i += 3, k += 2)
+	for (int i = 0, k = 0; i < gridW*gridH * 3; i += 3, k += 2)
 	{
-		if ((i / 3) % w == 0 && i != 0)
+		if ((i / 3) % gridW == 0 && i != 0)
 			j++;
 
-		glm::vec3 point = leftUpperCorner3D + ((i / 3) % w) * cw * glm::vec3(1, 0, 0) - j * cw * glm::vec3(0, 0, 1);
+		glm::vec3 point = leftUpperCorner3D + ((i / 3) % gridW) * cw * glm::vec3(1, 0, 0) - j * cw * glm::vec3(0, 0, 1);
 		grid[i] = point.x;
 		grid[i + 1] = point.y;
 		grid[i + 2] = point.z;
 
-		glm::vec2 tex = leftUpperCornerPix + ((i / 3) % w) * stepW * glm::vec2(1.0, 0) - j * stepH * glm::vec2(0, 1.0);//35 + 0<99 * 70 = 35<665
+		glm::vec2 tex = leftUpperCornerPix + ((i / 3) % gridW) * stepW * glm::vec2(1.0, 0) - j * stepH * glm::vec2(0, 1.0);//35 + 0<99 * 70 = 35<665
 		texCoord[k] = tex.x / (float)pixelW;//35<665 / 700 ~= 0<1
 		texCoord[k + 1] = tex.y / (float)pixelH;
 
 		//printf("texCoord: %f %f\n", texCoord[k], texCoord[k + 1]);
 	}
+}
+
+void printNormals(int i){
+	glm::vec3 v1 = glm::vec3(g_vertex_buffer_data_water[i], g_vertex_buffer_data_water[i + 1], g_vertex_buffer_data_water[i + 2]);
+	glm::vec3 v2 = glm::vec3(g_vertex_buffer_data_water[i + 3], g_vertex_buffer_data_water[i + 4], g_vertex_buffer_data_water[i + 5]);
+	glm::vec3 v3 = glm::vec3(g_vertex_buffer_data_water[i + 6], g_vertex_buffer_data_water[i + 7], g_vertex_buffer_data_water[i + 8]);
+
+	glm::vec3 a = v2 - v1;
+	glm::vec3 b = v3 - v2;
+	glm::vec3 c = v1 - v3;
+
+	glm::vec3 n1 = glm::cross(a, -c);
+	glm::vec3 n2 = glm::cross(b, -a);
+	glm::vec3 n3 = glm::cross(c, -b);
+
+	printf("n1: %f %f %f\n", n1.x, n1.y, n1.z);
+	printf("n2: %f %f %f\n", n2.x, n2.y, n2.z);
+	printf("n3: %f %f %f\n", n3.x, n3.y, n3.z);
 }

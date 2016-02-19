@@ -12,8 +12,8 @@ out vec4 ftex;
 //extra
 in vec4 estimatedPoint[];
 out vec4 fEstimatedPoint;
-in vec3 refRay[];
-out vec3 fRefRay;
+in float size[];
+out float fsize;
 
 void main()
 {
@@ -26,12 +26,12 @@ void main()
 	EndPrimitive();*/
 
 	gl_Position = estimatedPoint[0];//ftex;//gl_in[0].gl_Position;
-	gl_PointSize = 5;
+	gl_PointSize = size[0];//10;
 	fEstimatedPoint = estimatedPoint[0];
 	EmitVertex();
 	EndPrimitive();
 
 	//extra
 	
-	fRefRay = refRay[0];
+	fsize = size[0];
 }
