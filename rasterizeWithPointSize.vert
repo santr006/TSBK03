@@ -10,4 +10,5 @@ void main(){
 	//pass through position and size
     gl_Position = texture(framebuffer, UV);
 	gl_PointSize = framebuffer.w;
+
 }

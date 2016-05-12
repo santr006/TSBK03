@@ -97,5 +97,10 @@
     <None Include="calcIntersection.geo" />
     <None Include="passThrough2.geo" />
     <None Include="getPos.vert" />
+    <None Include="fragGiveDepth.glsl" />
+    <None Include="combine.frag" />
+    <None Include="combine.vert" />
+    <None Include="savePos.frag" />
+    <None Include="savePos.vert" />
   </ItemGroup>
 </Project>

@@ -3,14 +3,11 @@
 layout(location = 0) in vec3 vertexPosition_modelspace;
 layout(location = 1) in vec2 vertexUV;
 
-out vec2 vUV;
-out vec4 vtex;
 out vec4 estimatedPoint;
 out float size;
-out vec3 refRay;
 
 uniform mat4 MVP;
-uniform sampler2D renderedTexture;
+uniform sampler2D waterPos;
 uniform sampler2D normals;
 uniform sampler2D sandPos;
 uniform vec3 lightPos;
@@ -51,19 +48,16 @@ vec2 getTextureCoordinate(vec3 w) {
 }
 
 void main() {
-	gl_Position = MVP * vec4(vertexPosition_modelspace,1);//grid points in light-space
-	vUV = vertexUV;
-	vtex = MVP * texture( renderedTexture, vUV );//water points in light-space
+	gl_Position = vec4(vertexPosition_modelspace,1);//grid points in world-space
 
-	//extra
-	vec3 point = texture( renderedTexture, vUV ).xyz;
-	vec3 normal = texture( normals, vUV ).xyz;
+	vec3 point = texture( waterPos, vertexUV ).xyz;
+	vec3 normal = texture( normals, vertexUV ).xyz;
 	
 	//create a ray for every point going from the camera to the point
 	vec3 r1 = point - lightPos;
 	
 	//get the refracted vector r2
-	vec3 r2 = refract(normalize(r1), normal, 1.5);
+	vec3 r2 = refract(normalize(r1), normalize(normal), 1.5);
 
 	//Points along this ray are defined by p = start + d*r2, d = distance from start
 	//initially d = 1;
@@ -74,20 +68,20 @@ void main() {
 	p = texture( sandPos, newUV ).xyz;
 
 	//get the distance and new estimation
-	//for loop?
-	float d = length(p - point);
-	p = point + d * r2;
-	newUV = getTextureCoordinate(p);
-	p = texture( sandPos, newUV ).xyz;
-
-	estimatedPoint = MVP * vec4(p,1);
+	//loop
+	for(int i = 0; i < 5; i++) {
+		float d = length(p - point);
+		p = point + d * r2;
+		newUV = getTextureCoordinate(p);
+		p = texture( sandPos, newUV ).xyz;
+	}
+	
+	estimatedPoint = MVP * vec4(p,1); //in camera-space
 
 	//calculate size of point
 	float a = maxSize - zfar * (maxSize - minSize) / (zfar - znear);// 12 - 10*9/9 = 2
 	float b = znear * zfar * (maxSize - minSize) / (zfar - znear);// 1 * 10 * 9 / 9 = 10
-	float distToView = length(p - cameraPos);
+	float distToView = length(vec3(estimatedPoint.x, estimatedPoint.y, estimatedPoint.z) - cameraPos);
 	size = a + b / distToView;// 2 + 10 / dist;
-
-	refRay = r2;
 }
 

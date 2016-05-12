@@ -39,9 +39,12 @@
     <None Include="calcIntersection.vert" />
     <None Include="calcIntersection2.frag" />
     <None Include="calcIntersection2.vert" />
+    <None Include="combine.frag" />
+    <None Include="combine.vert" />
     <None Include="compareSurfaceAndGrid.frag" />
     <None Include="compareSurfaceAndGrid.vert" />
     <None Include="fragGiveColor.glsl" />
+    <None Include="fragGiveDepth.glsl" />
     <None Include="fragUsesTexture.glsl" />
     <None Include="getPos.vert" />
     <None Include="lightToWorld.frag" />
@@ -53,6 +56,8 @@
     <None Include="renderToTexture1.frag" />
     <None Include="returnSeenPos.frag" />
     <None Include="returnSeenPos.vert" />
+    <None Include="savePos.frag" />
+    <None Include="savePos.vert" />
     <None Include="vertUsesTexture.glsl" />
     <None Include="vertOnlyMoves.glsl" />
   </ItemGroup>
